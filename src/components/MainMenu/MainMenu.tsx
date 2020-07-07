@@ -15,13 +15,33 @@ interface MainMenuProperties{
     items: MainMenuItem[];
 }
 
+interface MainMenuState {
+    items: MainMenuItem[];
+}
 
 export class MainMenu extends React.Component <MainMenuProperties>{
+    state: MainMenuState;
+
+    constructor(props: Readonly<MainMenuProperties>){
+        super(props);
+
+        this.state = {
+            items: props.items, // pocetno stanje
+        };
+
+    }
+
+    setItems(items: MainMenuItem[]){
+        this.setState({
+            items: items,      // novo stanje
+        });
+    }
+
     render(){
         return (
             <Container>
                 <Nav variant="tabs">
-                    {this.props.items.map(this.makeNavLink)} {/* Dinamicko kreiranje menija */}
+                    {this.state.items.map(this.makeNavLink)} {/* Dinamicko kreiranje menija */}
                 </Nav>
             </Container>
         );
