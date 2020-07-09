@@ -1,7 +1,5 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
 import { ApiConfig } from "../config/api.config";
-import { resolve } from "path";
-import { reject } from "core-js/fn/promise";
 
 export default function api( // poziv api metoda
     path: string,
@@ -55,7 +53,7 @@ export default function api( // poziv api metoda
     
 }
 
-interface ApiResponse{
+export  interface ApiResponse{
     status: 'ok' | 'error' | 'login';
     data: any;
 }
@@ -72,7 +70,7 @@ async function responseHandler(
         return resolve(response);
     }
 
-    let response = ApiResponse;
+    let response: ApiResponse;
 
     if(res.data.errorCode < 0){
         response = {
@@ -95,7 +93,7 @@ function getToken(): string{
     return 'Berer ' + token;
 }
 
-function saveToken(token: string){
+export function saveToken(token: string){
     localStorage.setItem('api_token', token);
 }
 
@@ -104,7 +102,7 @@ function getRefreshToken(): string{
     return token + '';
 }
 
-function saveRefreshToken(token: string){
+export function saveRefreshToken(token: string){
     localStorage.setItem('api_refresh_token', token);
 }
 

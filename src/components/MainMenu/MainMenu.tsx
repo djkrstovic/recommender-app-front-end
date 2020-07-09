@@ -55,6 +55,6 @@ export class MainMenu extends React.Component <MainMenuProperties>{
             <Link to={ item.link } className="nav-link">
                 { item.text }
             </Link>
-            )
+            );
     }
 }
