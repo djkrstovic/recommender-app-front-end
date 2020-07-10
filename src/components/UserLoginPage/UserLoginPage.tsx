@@ -60,6 +60,7 @@ export default class UserLoginPage extends React.Component{
             }
         )
         .then((res: ApiResponse) => {
+            
             if(res.status === 'error'){
                 this.setErrorMessage('System error... Try again!');
                 return;

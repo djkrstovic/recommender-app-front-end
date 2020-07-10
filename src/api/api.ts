@@ -62,29 +62,21 @@ async function responseHandler(
     res:  AxiosResponse<any>,
     resolve: (value?: ApiResponse) => void,
 ){
-    if(res.status < 200 || res.status >= 300){
+    if (res.status < 200 || res.status >= 300) {
         const response: ApiResponse = {
             status: 'error',
             data: res.data,
         };
+
         return resolve(response);
     }
 
-    let response: ApiResponse;
+    const response: ApiResponse = {
+        status: 'ok',
+        data: res.data,
+    };
 
-    if(res.data.errorCode < 0){
-        response = {
-            status: 'login',
-            data: null,
-        };
-    } else{
-        response = {
-            status: 'ok',
-            data: res.data,
-        };
-    }
-
-    resolve(response);
+    return resolve(response);
 
 }
 
