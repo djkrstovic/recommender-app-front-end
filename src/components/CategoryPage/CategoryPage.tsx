@@ -8,6 +8,7 @@ import { Redirect, Link } from 'react-router-dom';
 import api, { ApiResponse } from '../../api/api';
 import { ApiConfig } from '../../config/api.config';
 import TvSeriesType from '../../types/TvSeriesType';
+import RoledMainMenu from '../RoledMainMenu/RoledMainMenu';
 
 
 interface CategoryPageProperties{
@@ -164,6 +165,7 @@ export default class CategoryPage extends React.Component <CategoryPagePropertie
         
         return(
             <Container>
+                <RoledMainMenu role="user"/>
                 <Card>
                     <Card.Body>
                         <Card.Title>
