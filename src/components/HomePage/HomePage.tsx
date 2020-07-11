@@ -111,6 +111,7 @@ class HomePage extends React.Component {
 			</Col>
 		)
 	}
+	
 
 }
 
