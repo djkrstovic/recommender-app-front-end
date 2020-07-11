@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Container, Card, Row, Col } from 'react-bootstrap';
-import { faListAlt } from '@fortawesome/free-solid-svg-icons'
+import { faFilm } from '@fortawesome/free-solid-svg-icons'
 import CategoryType from "../../types/CategoryType";
 import MovieType from '../../types/MovieType';
 import { Redirect, Link } from 'react-router-dom';
@@ -49,7 +49,7 @@ interface TvSeriesDto{
     titleEng?: string;
     director?: string;
     synopsis?: string;
-    photoMovies?: {
+    photoTvSeries?: {
         imagePath: string;
     };
     categoryId?: number;
@@ -103,7 +103,10 @@ export default class CategoryPage extends React.Component <CategoryPagePropertie
                         <img alt={ tvSeries.titleEng } src={ ApiConfig.PHOTO_PATH_TV_SERIES + 'small/' + tvSeries.imageUrl }/>
                     </Card.Header>
 					<Card.Body>
-						<Card.Title className="text-center" as="p"> {tvSeries.titleSrb} </Card.Title>
+						<Card.Title className="text-left"> {tvSeries.titleSrb} </Card.Title>
+						<Card.Title className="text-left"> {tvSeries.titleEng} </Card.Title>
+						<Card.Title className="text-left" as="p"> Director:<b><i> {tvSeries.director} </i></b></Card.Title>
+                        Synopsis: 
                         <Card.Text>
                             { tvSeries.synopsis }
                         </Card.Text>
@@ -164,7 +167,7 @@ export default class CategoryPage extends React.Component <CategoryPagePropertie
                 <Card>
                     <Card.Body>
                         <Card.Title>
-                        <FontAwesomeIcon icon={ faListAlt }/> { this.state.category?.name }
+                        <FontAwesomeIcon icon={ faFilm }/> { this.state.category?.name }
                         </Card.Title>
                             { this.printOptionalMessage() }
                             { this.showMovies() }
@@ -222,7 +225,9 @@ export default class CategoryPage extends React.Component <CategoryPagePropertie
                         <img alt={ movies.titleEng } src={ ApiConfig.PHOTO_PATH_MOVIE + 'small/' + movies.imageUrl }/>
                     </Card.Header>
 					<Card.Body>
-						<Card.Title className="text-center" as="p"> {movies.titleSrb} </Card.Title>
+						<Card.Title className="text-left"> {movies.titleSrb} </Card.Title>
+						<Card.Title className="text-left"> {movies.titleEng} </Card.Title>
+						<Card.Title className="text-left" as="p">Director: <b><i> {movies.director} </i></b></Card.Title>
                         <Card.Text>
                             { movies.synopsis }
                         </Card.Text>
@@ -244,7 +249,7 @@ export default class CategoryPage extends React.Component <CategoryPagePropertie
             }
 
             if(res.status === 'error'){
-                return this.setMessage('Request error. Please try to refresh the page. ERROR: ' + JSON.stringify(res));
+                return this.setMessage('Request error. Please try to refresh the page. ERROR: ');
             }
 
             const categoryData: CategoryType = {
