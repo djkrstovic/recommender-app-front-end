@@ -7,4 +7,21 @@ export default interface ApiTvSeriesDto{
     imageUrl: string;
     categoryId  : number;
     genreId     : number;
+    episodes: {
+        episodeId: number;
+        titleSrb: string | null;
+        titleEng: string | null;
+        season: number;
+        seasonEpisode: number;        
+    }[];
+    photoTvSeries: {
+        photoTvSeriesId: number;
+        imagePath: string;
+    }[];
+    category: {
+        name: string;
+    };
+    genre:{
+        name: string | null;
+    };
 }
