@@ -7,7 +7,23 @@ export default class MovieType{
     imageUrl?: string;
     categoryId  ?: number;
     genreId     ?: number;
-    tags        ?: {
-        tagId?: number;
-    }[] | null;
+    tagMovies?: {
+        tagMoviesId: number;
+        tagId: number;
+
+    }[];
+    tag?: {
+        tagId: number;
+        tagName: string;
+    }[];
+    photoMovies?: {
+        photoMovieId: number;
+        imagePath: string;
+    }[];
+    category?: {
+        name: string;
+    };
+    genre?:{
+        name: string | null;
+    };
 }

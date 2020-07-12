@@ -7,31 +7,45 @@ import api, { ApiResponse } from '../../api/api';
 import RoledMainMenu from '../RoledMainMenu/RoledMainMenu';
 import MovieType from '../../types/MovieType';
 import ApiMoviesDto from '../../dtos/ApiMovies.dto';
+import CategoryType from '../../types/CategoryType';
+import ApiCategoryDto from '../../dtos/ApiCategories.dto';
+import GenreType from '../../types/GenreType';
+import ApiGenreDto from '../../dtos/ApiGenre.dto';
 
 interface AdministratorDashboardMovieState{
 	isAdministratorLoggedIn: boolean;
 	movies: MovieType[];
+	categories: CategoryType[];
+	genres: GenreType[];
 
 	addModal:{
 		visible: boolean;
+		message: string;
 		titleEng: string;
 		titleSrb: string;
 		director: string;
 		synopsis: string;
 		categoryId: number | null;
 		genreId: number | null;
-		message: string;
+		tags: {
+			tagId: number;
+			tagName: string;
+		}[]
 	};
 	editModal:{
-		movieId?: number;
 		visible: boolean;
+		message: string;
+		
 		titleEng: string;
 		titleSrb: string;
 		director: string;
 		synopsis: string;
 		categoryId: number | null;
 		genreId: number | null;
-		message: string;
+		tags: {
+			tagId: number;
+			tagName: string;
+		}[]
 	};
 }
 
@@ -44,6 +58,8 @@ class AdministratorDashboardMovie extends React.Component {
 		this.state = {
 			isAdministratorLoggedIn: true,
 			movies: [],
+			categories: [],
+			genres: [],
 
 			addModal:{
 				visible: false,
@@ -51,9 +67,10 @@ class AdministratorDashboardMovie extends React.Component {
 				titleSrb: '',
 				director: '',
 				synopsis: '',
-				categoryId: null,
-				genreId: null,
+				categoryId: 1,
+				genreId: 1,
 				message: '',
+				tags:[],
 			},
 			editModal:{
 				visible: false,
@@ -61,9 +78,10 @@ class AdministratorDashboardMovie extends React.Component {
 				titleSrb: '',
 				director: '',
 				synopsis: '',
-				categoryId: null,
-				genreId: null,
+				categoryId: 1,
+				genreId: 1,
 				message: '',
+				tags: [],	
 			},
 		}
 	}
@@ -116,14 +134,69 @@ class AdministratorDashboardMovie extends React.Component {
 		));
 	}
 
-	componentWillMount(){
+	componentDidMount(){
+		this.getCategories();
+		this.getGenre()
 		this.getMovies();
+	}
+
+	private getCategories(){
+		api('/api/category/', 'get', {}, 'administrator')
+		.then((res: ApiResponse) => {
+			if(res.status === 'error' || res.status === 'login'){
+				this.setLogginState(false);
+				return;
+
+			}
+			this.putCategoriesInState(res.data);
+		});
+	}
+
+	private putCategoriesInState(data: ApiCategoryDto[]){
+		const categories: CategoryType[] = data.map(category => {
+			return{
+				categoryId: category.categoryId,
+				name: category.name,
+				items: [],
+			};
+		});
+
+		this.setState(Object.assign(this.state, {
+			categories: categories,
+		}));
+	}
+
+	private getGenre(){
+
+        api('api/genres/', 'get', {}, 'administrator' )
+        .then((res: ApiResponse) => {
+            if(res.status === "error" || res.status === "login"){
+				this.setLogginState(false);
+				return;
+			}
+
+			this.putGenresInState(res.data);
+        });
+	}
+	
+	private putGenresInState(data: ApiGenreDto[]){
+		const genres: GenreType[] = data.map(genre => {
+			return{
+				name: genre.name,
+			};
+		});
+
+		const newState = Object.assign(this.state, {
+			genres: genres,
+		});
+
+		this.setState(newState);
 	}
 
 
     private getMovies(){
 
-        api('api/movie/', 'get', {}, 'administrator' )
+        api('api/movie/?join=tagMovies&join=tag&join=photoMovies&join=category&join=genre', 'get', {}, 'administrator' )
         .then((res: ApiResponse) => {
             if(res.status === "error" || res.status === "login"){
 				this.setLogginState(false);
@@ -137,21 +210,25 @@ class AdministratorDashboardMovie extends React.Component {
 	private putMoviesInState(data: ApiMoviesDto[]){
 		const movies: MovieType[] = data.map(movie => {
 			return{
+				movieId: movie.movieId,
 				titleSrb: movie.titleSrb,
 				titleEng: movie.titleEng,
 				synopsis: movie.synopsis,
 				director: movie.director,
+				imageUrl: movie.photoMovies[0].imagePath,
 				categoryId: movie.categoryId,
 				genreId: movie.genreId,
+				tagMovies: movie.tagMovies,
+				tag: movie.tag,
+				photoMovies: movie.photoMovies,
+				category: movie.category,
+				genre: movie.genre,
 				items: [],
 			};
 		});
-
-		const newState = Object.assign(this.state, {
+		this.setState(Object.assign(this.state, {
 			movies: movies,
-		});
-
-		this.setState(newState);
+		}));
 	}
 
 
@@ -181,7 +258,7 @@ class AdministratorDashboardMovie extends React.Component {
 						<Table hover size="sm" bordered>
 							<thead>
 								<tr>
-									<th colSpan={5}></th>
+									<th colSpan={7}></th>
 									<th className="text-center">
 										<Button variant="primary" size="sm"
 										onClick={ ()=> this.showAddModal() }>
@@ -195,6 +272,8 @@ class AdministratorDashboardMovie extends React.Component {
 									<th>Title Srb</th>
 									<th>Director</th>
 									<th>Synopsis</th>
+									<th>Category</th>
+									<th>Genre</th>
 									<th></th>
 								</tr>
 							</thead>
@@ -202,10 +281,12 @@ class AdministratorDashboardMovie extends React.Component {
 								{ this.state.movies.map(movie => (
 									<tr>
 										<td className="text-right">{ movie.movieId }</td>
-										<td className="text-right">{ movie.titleEng }</td>
 										<td className="text-right">{ movie.titleSrb }</td>
+										<td className="text-right">{ movie.titleEng }</td>
 										<td className="text-right">{ movie.director }</td>
 										<td className="text-right">{ movie.synopsis }</td>
+										<td className="text-right">{ movie.category?.name }</td>
+										<td className="text-right">{ movie.genre?.name }</td>
 										<td className="text-center">
 											<Button variant="info" size="sm"
 											onClick={ () => this.showEditModal(movie) }>
@@ -228,41 +309,45 @@ class AdministratorDashboardMovie extends React.Component {
 					</Modal.Header>
 					<Modal.Body>
 						<Form.Group>
-							<Form.Label htmlFor="titleSrb">Title Srb</Form.Label>
-							<Form.Control id="titleSrb" type="text" value={ this.state.addModal.titleSrb }
+							<Form.Label htmlFor="add-titleSrb">Title Srb</Form.Label>
+							<Form.Control id="add-titleSrb" type="text" value={ this.state.addModal.titleSrb }
 								onChange={ (e)=> this.setAddModalStringFieldState('titleSrb', e.target.value)}/>
 						</Form.Group>
 						<Form.Group>
-							<Form.Label htmlFor="titleEng">Title Eng</Form.Label>
-							<Form.Control id="titleEng" type="text" value={ this.state.addModal.titleEng }
+							<Form.Label htmlFor="add-titleEng">Title Eng</Form.Label>
+							<Form.Control id="add-titleEng" type="text" value={ this.state.addModal.titleEng }
 								onChange={ (e)=> this.setAddModalStringFieldState('titleEng', e.target.value)}/>
 						</Form.Group>
 						<Form.Group>
-							<Form.Label htmlFor="synopsis">Synopsis</Form.Label>
-							<Form.Control id="synopsis" type="text" value={ this.state.addModal.synopsis }
+							<Form.Label htmlFor="add-synopsis">Synopsis</Form.Label>
+							<Form.Control id="add-synopsis" as="textarea" rows={ 10 } value={ this.state.addModal.synopsis }
 								onChange={ (e)=> this.setAddModalStringFieldState('synopsis', e.target.value)}/>
 						</Form.Group>
 						<Form.Group>
-							<Form.Label htmlFor="director">Director</Form.Label>
-							<Form.Control id="director" type="text" value={ this.state.addModal.director }
+							<Form.Label htmlFor="add-director">Director</Form.Label>
+							<Form.Control id="add-director" type="text" value={ this.state.addModal.director }
 								onChange={ (e)=> this.setAddModalStringFieldState('director', e.target.value)}/>
 						</Form.Group>
 						<Form.Group>
-							<Form.Label htmlFor="categoryId">Category</Form.Label>
-							<Form.Control id="categoryId" as="select" value={ this.state.addModal.categoryId?.toString() }
+							<Form.Label htmlFor="add-categoryId">Category</Form.Label>
+							<Form.Control id="add-categoryId" as="select" value={ this.state.addModal.categoryId?.toString() }
 								onChange={ (e)=> this.setAddModalNumberFieldState('categoryId', e.target.value)}>
-									<option value="null">No category</option>
-									<option value={2}>TV Series</option>
-									<option value={1}>Movie</option>
+									{ this.state.categories.map((category) => 
+										<option value={ category.categoryId?.toString() }>
+											{ category.name }
+										</option>
+									) }
 								</Form.Control>
 						</Form.Group>
 						<Form.Group>
-							<Form.Label htmlFor="genreId">Genre</Form.Label>
-							<Form.Control id="genreId" as="select" value={ this.state.addModal.genreId?.toString() }
+							<Form.Label htmlFor="add-genreId">Genre</Form.Label>
+							<Form.Control id="add-genreId" as="select" value={ this.state.addModal.genreId?.toString() }
 								onChange={ (e)=> this.setAddModalNumberFieldState('genreId', e.target.value)}>
-									<option value="null">No genre</option>
-									<option value={2}>Action</option>
-									<option value={1}>Drama</option>
+									{ this.state.genres.map((genre) => 
+										<option value={ genre.genreId?.toString() }>
+											{ genre.name }
+										</option>
+									) }
 								</Form.Control>
 						</Form.Group>
 						<Form.Group>
@@ -277,60 +362,6 @@ class AdministratorDashboardMovie extends React.Component {
 				</Modal>
 				
 				
-
-				<Modal size="lg" centered show={ this.state.editModal.visible } onHide={ ()=> this.setEditModalVisibleState(false) }>
-					<Modal.Header closeButton>
-						<Modal.Title>Edit new Movie</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<Form.Group>
-							<Form.Label htmlFor="titleSrb">Title Srb</Form.Label>
-							<Form.Control id="titleSrb" type="text" value={ this.state.editModal.titleSrb }
-								onChange={ (e)=> this.setEditModalStringFieldState('titleSrb', e.target.value)}/>
-						</Form.Group>
-						<Form.Group>
-							<Form.Label htmlFor="titleEng">Title Eng</Form.Label>
-							<Form.Control id="titleEng" type="text" value={ this.state.editModal.titleEng }
-								onChange={ (e)=> this.setEditModalStringFieldState('titleEng', e.target.value)}/>
-						</Form.Group>
-						<Form.Group>
-							<Form.Label htmlFor="synopsis">Synopsis</Form.Label>
-							<Form.Control id="synopsis" type="text" value={ this.state.editModal.synopsis }
-								onChange={ (e)=> this.setEditModalStringFieldState('synopsis', e.target.value)}/>
-						</Form.Group>
-						<Form.Group>
-							<Form.Label htmlFor="director">Director</Form.Label>
-							<Form.Control id="director" type="text" value={ this.state.editModal.director }
-								onChange={ (e)=> this.setEditModalStringFieldState('director', e.target.value)}/>
-						</Form.Group>
-						<Form.Group>
-							<Form.Label htmlFor="categoryId">Category</Form.Label>
-							<Form.Control id="categoryId" as="select" value={ this.state.editModal.categoryId?.toString() }
-								onChange={ (e)=> this.setEditModalNumberFieldState('categoryId', e.target.value)}>
-									<option value="null">No category</option>
-									<option value={2}>TV Series</option>
-									<option value={1}>Movie</option>
-								</Form.Control>
-						</Form.Group>
-						<Form.Group>
-							<Form.Label htmlFor="genreId">Genre</Form.Label>
-							<Form.Control id="genreId" as="select" value={ this.state.editModal.genreId?.toString() }
-								onChange={ (e)=> this.setEditModalNumberFieldState('genreId', e.target.value)}>
-									<option value="null">No genre</option>
-									<option value={2}>Action</option>
-									<option value={1}>Drama</option>
-								</Form.Control>
-						</Form.Group>
-						<Form.Group>
-							<Button variant="primary" onClick={ () => this.doEditMovie() } >
-							<FontAwesomeIcon icon={ faEdit }/> Edit Movie
-							</Button>
-						</Form.Group>
-						{ this.state.editModal.message ? (
-							<Alert variant="danger" value= { this.state.editModal.message }/>
-						) : '' }
-					</Modal.Body>
-				</Modal>
             </Container>
         );
 	}
@@ -371,7 +402,7 @@ class AdministratorDashboardMovie extends React.Component {
 		})
 	}
 	private doEditMovie(){
-		api('api/movie/' + this.state.editModal.movieId, 'patch', {
+		api('api/movie/', 'patch', {
 			titleSrb: this.state.editModal.titleSrb,
 			titleEng: this.state.editModal.titleEng,
 			synopsis: this.state.editModal.synopsis,

@@ -7,4 +7,23 @@ export default interface ApiMoviesDto{
     imageUrl: string;
     categoryId  : number;
     genreId     : number;
+    tagMovies: {                    // article_feature
+        tagMoviesId: number;
+        tagId: number;
+
+    }[];
+    tag: {                          // feature
+        tagId: number;
+        tagName: string;
+    }[];
+    photoMovies: {
+        photoMovieId: number;
+        imagePath: string;
+    }[];
+    category?: {
+        name: string;
+    };
+    genre?:{
+        name: string | null;
+    };
 }
