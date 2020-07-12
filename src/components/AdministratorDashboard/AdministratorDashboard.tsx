@@ -1,8 +1,8 @@
 import React from 'react';
 import { Container, Card } from 'react-bootstrap';
-import { faHome } from '@fortawesome/free-solid-svg-icons';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import api, { ApiResponse } from '../../api/api';
 import RoledMainMenu from '../RoledMainMenu/RoledMainMenu';
 
@@ -61,9 +61,15 @@ class AdministratorDashboard extends React.Component {
                 <Card>
                     <Card.Body>
                         <Card.Title>
-                        <FontAwesomeIcon icon={ faHome }/> Administrator dashboard
+                        <FontAwesomeIcon icon={ faEdit }/> Administrator dashboard
                         </Card.Title>
-						...
+						
+						<ul>
+							<li><Link to="/administrator/dashboard/tvSeries">TV Series</Link></li>
+							<li><Link to="/administrator/dashboard/movie">Movie</Link></li>
+							<li><Link to="/administrator/dashboard/tag">Tag</Link></li>
+							<li><Link to="/administrator/dashboard/genre">Genre</Link></li>
+						</ul>
                     </Card.Body>
                 </Card>
             </Container>

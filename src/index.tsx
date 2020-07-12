@@ -15,6 +15,10 @@ import AdministratorLoginPage from './components/AdministratorLoginPage/Administ
 import CategoryPage from './components/CategoryPage/CategoryPage';
 import {UserRegistrationPage} from './components/UserRegistrationPage/UserRegistrationPage';
 import AdministratorDashboard from './components/AdministratorDashboard/AdministratorDashboard';
+import AdministratorDashboardTvSeries from './components/AdministratorDashboardTvSeries/AdministratorDashboardTvSeries';
+import AdministratorDashboardMovie from './components/AdministratorDashboardMovie/AdministratorDashboardMovie';
+import AdministratorDashboardTag from './components/AdministratorDashboardTag/AdministratorDashboardTag';
+import AdministratorDashboardGenre from './components/AdministratorDashboardGenre/AdministratorDashboardGenre';
 
 
 
@@ -23,12 +27,16 @@ ReactDOM.render(
     <HashRouter>
       <Switch>
         <Route exact path="/" component={ HomePage } />
-        <Route exact path="/contact" component={ ContactPage } />
-        <Route exact path="/user/login" component={ UserLoginPage } />
-        <Route exact path="/user/register" component={ UserRegistrationPage } />
-        <Route exact path="/category/:cId" component={ CategoryPage } />
-        <Route exact path="/administrator/login" component={ AdministratorLoginPage } />
+        <Route path="/contact" component={ ContactPage } />
+        <Route path="/user/login" component={ UserLoginPage } />
+        <Route path="/user/register" component={ UserRegistrationPage } />
+        <Route path="/category/:cId" component={ CategoryPage } />
+        <Route path="/administrator/login" component={ AdministratorLoginPage } />
         <Route exact path="/administrator/dashboard" component={ AdministratorDashboard } />
+        <Route path="/administrator/dashboard/tvSeries" component={ AdministratorDashboardTvSeries } />
+        <Route path="/administrator/dashboard/movie" component={ AdministratorDashboardMovie } />
+        <Route path="/administrator/dashboard/tag" component={ AdministratorDashboardTag } />
+        <Route path="/administrator/dashboard/genre" component={ AdministratorDashboardGenre } />
       </Switch>
     </HashRouter>
 
