@@ -19,6 +19,7 @@ import AdministratorDashboardTvSeries from './components/AdministratorDashboardT
 import AdministratorDashboardMovie from './components/AdministratorDashboardMovie/AdministratorDashboardMovie';
 import AdministratorDashboardTag from './components/AdministratorDashboardTag/AdministratorDashboardTag';
 import AdministratorDashboardGenre from './components/AdministratorDashboardGenre/AdministratorDashboardGenre';
+import AdministratorDashboardPhotoMovie from './components/AdministratorDashboardPhotoMovie/AdministratorDashboardPhotoMovie';
 
 
 
@@ -35,6 +36,7 @@ ReactDOM.render(
         <Route exact path="/administrator/dashboard" component={ AdministratorDashboard } />
         <Route path="/administrator/dashboard/tvSeries" component={ AdministratorDashboardTvSeries } />
         <Route path="/administrator/dashboard/movie" component={ AdministratorDashboardMovie } />
+        <Route path="/administrator/dashboard/photoMovies/:mId" component={ AdministratorDashboardPhotoMovie } />
         <Route path="/administrator/dashboard/tag" component={ AdministratorDashboardTag } />
         <Route path="/administrator/dashboard/genre" component={ AdministratorDashboardGenre } />
       </Switch>

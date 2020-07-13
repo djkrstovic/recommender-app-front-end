@@ -1,8 +1,8 @@
 import React from 'react';
 import { Container, Card, Table, Button, Modal, Form, Alert, Col, Row } from 'react-bootstrap';
-import { faListAlt, faEdit, faPlus, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faListAlt, faEdit, faPlus, faSave, faImages } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import api, { ApiResponse, apiFile } from '../../api/api';
 import RoledMainMenu from '../RoledMainMenu/RoledMainMenu';
 import MovieType from '../../types/MovieType';
@@ -424,6 +424,10 @@ class AdministratorDashboardMovie extends React.Component {
 										<td className="text-right">{ movie.tags }</td>
 										<td className="text-right">{ movie.genre?.name }</td>
 										<td className="text-center">
+											<Link to={"/administrator/dashboard/photoMovies/" + movie.movieId}
+											className="btn btn-sm btn-dark">
+												<FontAwesomeIcon icon={ faImages }/> Photos
+											</Link>
 											<Button variant="info" size="sm"
 											onClick={ () => this.showEditModal(movie) }>
 											<FontAwesomeIcon icon={ faEdit }/> Edit
