@@ -291,7 +291,7 @@ export default class CategoryPage extends React.Component <CategoryPagePropertie
                     imageUrl: '',
                     categoryId: movies.categoryId,
                     genreId: movies.genreId,
-                    tag: [],
+                    tags: [],
                 }
 
                 

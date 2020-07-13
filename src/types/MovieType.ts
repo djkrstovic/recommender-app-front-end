@@ -12,7 +12,7 @@ export default class MovieType{
         tagId: number;
 
     }[];
-    tag?: {
+    tags?: {
         tagId: number;
         tagName: string;
     }[];

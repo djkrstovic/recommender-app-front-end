@@ -12,7 +12,7 @@ export default interface ApiMoviesDto{
         tagId: number;
 
     }[];
-    tag: {                          // feature
+    tags: {                          // feature
         tagId: number;
         tagName: string;
     }[];
